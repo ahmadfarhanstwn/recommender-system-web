@@ -23,7 +23,7 @@ const pages = [
   },
   {
     name: "Eksplorasi Model",
-    link: "/",
+    link: "/explore",
   },
   {
     name: "Data Saluran",

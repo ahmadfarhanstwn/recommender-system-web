@@ -23,12 +23,15 @@ import {
   Typography,
 } from "@mui/material";
 import { RecommenderWrapper } from "../StyledComponents/Components";
+import axios from "axios";
 
 export const RecommenderPage = () => {
   const [criteria, setCriteria] = useState("channelName");
-  const [suggestion, setSuggestion] = useState(["test"]);
+  const [suggestion, setSuggestion] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [results, setResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorValue, setErrorValue] = useState("");
 
   const handleChangeCriteria = (event) => {
     setCriteria(event.target.value);
@@ -38,12 +41,63 @@ export const RecommenderPage = () => {
     setInputValue(event.target.value);
     if (criteria === "channelName") {
       //handle set suggestion by call suggestion through api
+      axios
+        .post(`${process.env.API_URL}`, {
+          keyword: inputValue,
+        })
+        .then((response) => {
+          const data = response.data.data;
+          setSuggestion(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setErrorValue("");
+    setResults([]);
+    setIsLoading(true);
     //call api by conditioning based on criteria
+    if (criteria === "channelName") {
+      axios
+        .post(`${process.env.API_URL}/recommendations`, {
+          channel_name: inputValue,
+        })
+        .then((response) => {
+          setIsLoading(false);
+          const data = response.data.data;
+          if (!response.data.error) {
+            setResults(data);
+          } else {
+            setErrorValue(data);
+          }
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          setErrorValue(error);
+        });
+    } else {
+      axios
+        .post(`${process.env.API_URL}/recommendations_by_keywords`, {
+          keyword: inputValue,
+        })
+        .then((response) => {
+          setIsLoading(false);
+          const data = response.data.data;
+          if (!response.data.error) {
+            setResults(data);
+          } else {
+            setErrorValue(data);
+          }
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          setErrorValue(error);
+        });
+    }
   };
 
   return (

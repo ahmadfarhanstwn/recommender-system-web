@@ -19,3 +19,7 @@ export const RecommenderWrapper = styled.div`
 export const InputWrapper = styled.div({
   display: "flex",
 });
+
+export const ExploreModelInput = styled.div({
+  width: "80%",
+});
