@@ -25,10 +25,6 @@ const pages = [
     name: "Eksplorasi Model",
     link: "/explore",
   },
-  {
-    name: "Data Saluran",
-    link: "/",
-  },
 ];
 
 const ResponsiveAppBar = () => {
@@ -43,7 +39,7 @@ const ResponsiveAppBar = () => {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "#C70039" }}>
+    <AppBar position="fixed" sx={{ backgroundColor: "#C70039" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <SchoolIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />

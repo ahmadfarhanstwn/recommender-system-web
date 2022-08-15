@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { ListItem } from "@mui/material";
 
 export const HomeWrapper = styled.div`
   display: flex;
-  margin-top: 2rem;
+  margin-top: 7rem;
 `;
 
 export const StyledLink = styled(Link)`
@@ -11,7 +12,8 @@ export const StyledLink = styled(Link)`
 `;
 
 export const RecommenderWrapper = styled.div`
-  margin-top: 1rem;
+  margin-top: 5rem;
+  margin-bottom: 5rem;
   margin-left: 1rem;
   margin-right: 1rem;
 `;

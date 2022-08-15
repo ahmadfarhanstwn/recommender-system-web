@@ -26,6 +26,48 @@ import {
 } from "../StyledComponents/Components";
 import axios from "axios";
 
+const getFindWordSimilarity = (word) => {
+  let bodyForm = new FormData();
+  bodyForm.append("word", word);
+  return axios({
+    method: "POST",
+    url: `${process.env.REACT_APP_API_URL}/find_word_similarity`,
+    data: bodyForm,
+    headers: { "Content-Type": "multipart/form-data" },
+  })
+    .then((response) => response.data)
+    .catch((error) => console.log(error));
+};
+
+const getFindSimilaritySum = (word1, word2) => {
+  let bodyForm = new FormData();
+  bodyForm.append("word1", word1);
+  bodyForm.append("word2", word2);
+  return axios({
+    method: "POST",
+    url: `${process.env.REACT_APP_API_URL}/count_similarity_between_words`,
+    data: bodyForm,
+    headers: { "Content-Type": "multipart/form-data" },
+  })
+    .then((response) => response.data)
+    .catch((error) => console.log(error));
+};
+
+const getArithmatics = (wordPlus1, wordPlus2, wordMinus) => {
+  let bodyForm = new FormData();
+  bodyForm.append("wordPlus1", wordPlus1);
+  bodyForm.append("wordPlus2", wordPlus2);
+  bodyForm.append("wordMinus", wordMinus);
+  return axios({
+    method: "POST",
+    url: `${process.env.REACT_APP_API_URL}/find_word_by_arithmatic`,
+    data: bodyForm,
+    headers: { "Content-Type": "multipart/form-data" },
+  })
+    .then((response) => response.data)
+    .catch((error) => console.log(error));
+};
+
 export const ModelExplorationPage = () => {
   /*
     Three mode :
@@ -81,62 +123,25 @@ export const ModelExplorationPage = () => {
     //call api by conditioning based on criteria
     setResults([]);
     if (mode === "findSimilarWords") {
-      axios
-        .post(`${process.env.API_URL}/find_word_similarity`, {
-          word: inputValue,
-        })
-        .then((response) => {
-          setIsLoading(false);
-          const data = response.data.data;
-          if (!response.data.error) {
-            setResults(data);
-          } else {
-            setErrorValue(data);
-          }
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          setErrorValue(error);
-        });
+      getFindWordSimilarity(inputValue).then((res) => {
+        setIsLoading(false);
+        console.log(res.data);
+        res.error ? setErrorValue(res.data) : setResults(res.data);
+      });
     } else if (mode === "findSimilaritySum") {
-      axios
-        .post(`${process.env.API_URL}/count_similarity_between_words`, {
-          word1: input1Value,
-          word2: input2Value,
-        })
-        .then((response) => {
-          setIsLoading(false);
-          const data = response.data.data;
-          if (!response.data.error) {
-            setResults(data);
-          } else {
-            setErrorValue(data);
-          }
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          setErrorValue(error);
-        });
+      getFindSimilaritySum(input1Value, input2Value).then((res) => {
+        setIsLoading(false);
+        console.log(res.data);
+        res.error ? setErrorValue(res.data) : setResults(res.data);
+      });
     } else {
-      axios
-        .post(`${process.env.API_URL}/find_word_by_arithmatics`, {
-          wordPlus1: inputPlus1Value,
-          wordPlus2: inputPlus2Value,
-          wordMinus: inputMinusValue,
-        })
-        .then((response) => {
+      getArithmatics(inputPlus1Value, inputPlus2Value, inputMinusValue).then(
+        (res) => {
           setIsLoading(false);
-          const data = response.data.data;
-          if (!response.data.error) {
-            setResults(data);
-          } else {
-            setErrorValue(data);
-          }
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          setErrorValue(error);
-        });
+          console.log(res.data);
+          res.error ? setErrorValue(res.data) : setResults(res.data);
+        }
+      );
     }
   };
 
@@ -297,7 +302,7 @@ export const ModelExplorationPage = () => {
             </Select>
           </FormControl>
         </Box>
-        <Button variant="contained" onSubmit={handleSubmit}>
+        <Button variant="contained" onClick={handleSubmit}>
           Submit
         </Button>
       </Stack>

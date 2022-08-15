@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <Paper
       sx={{
-        marginTop: "calc(10% + 60px)",
+        marginTop: "10rem",
         width: "100%",
         position: "fixed",
         bottom: 0,
