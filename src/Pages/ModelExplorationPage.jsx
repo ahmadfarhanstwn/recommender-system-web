@@ -14,8 +14,15 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  Paper,
   Select,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   TextField,
   Typography,
 } from "@mui/material";
@@ -24,6 +31,8 @@ import {
   ExploreModelInput,
   RecommenderWrapper,
 } from "../StyledComponents/Components";
+import errorImage from "../Assets/error_image.png";
+import { TailSpin } from "react-loader-spinner";
 import axios from "axios";
 
 const getFindWordSimilarity = (word) => {
@@ -60,7 +69,7 @@ const getArithmatics = (wordPlus1, wordPlus2, wordMinus) => {
   bodyForm.append("wordMinus", wordMinus);
   return axios({
     method: "POST",
-    url: `${process.env.REACT_APP_API_URL}/find_word_by_arithmatic`,
+    url: `${process.env.REACT_APP_API_URL}/find_word_by_arithmatics`,
     data: bodyForm,
     headers: { "Content-Type": "multipart/form-data" },
   })
@@ -77,6 +86,8 @@ export const ModelExplorationPage = () => {
     */
   const [mode, setMode] = useState("findSimilarWords");
   const [results, setResults] = useState([]);
+  const [arithmaticsResult, setArithmaticsResult] = useState([]);
+  const [countSimilarityResult, setCountSimilarityResult] = useState("");
   const [inputValue, setInputValue] = useState(""); // for findSimilarityWords
 
   const [input1Value, setInput1Value] = useState(""); //for first word in findSimilaritySum
@@ -118,6 +129,8 @@ export const ModelExplorationPage = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setResults([]);
+    setArithmaticsResult([]);
+    setCountSimilarityResult("");
     setErrorValue("");
     setIsLoading(true);
     //call api by conditioning based on criteria
@@ -132,14 +145,16 @@ export const ModelExplorationPage = () => {
       getFindSimilaritySum(input1Value, input2Value).then((res) => {
         setIsLoading(false);
         console.log(res.data);
-        res.error ? setErrorValue(res.data) : setResults(res.data);
+        res.error
+          ? setErrorValue(res.data)
+          : setCountSimilarityResult(res.data);
       });
     } else {
       getArithmatics(inputPlus1Value, inputPlus2Value, inputMinusValue).then(
         (res) => {
           setIsLoading(false);
           console.log(res.data);
-          res.error ? setErrorValue(res.data) : setResults(res.data);
+          res.error ? setErrorValue(res.data) : setArithmaticsResult(res.data);
         }
       );
     }
@@ -319,7 +334,108 @@ export const ModelExplorationPage = () => {
       >
         Hasil :
       </Typography>
-      {/* table */}
+      {results.length > 0 && (
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Hasil Kata</TableCell>
+                <TableCell align="right">Nilai Similarity</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {results.map((result, index) => (
+                <TableRow
+                  key={index}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {result[0]}
+                  </TableCell>
+                  <TableCell align="right">{result[1]}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+      {arithmaticsResult.length > 0 && (
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Hasil Kata</TableCell>
+                <TableCell align="right">Nilai Similarity</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow
+                key={0}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {arithmaticsResult[0]}
+                </TableCell>
+                <TableCell align="right">{arithmaticsResult[1]}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+      {countSimilarityResult.length > 0 && (
+        <div>
+          <Typography
+            variant="p"
+            sx={{
+              mr: 2,
+              flexGrow: 1,
+              fontFamily: "Poppins",
+              fontWeight: 700,
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            Nilai similarity dari "{input1Value}" dan "{input2Value}" adalah
+            senilai : {countSimilarityResult}
+          </Typography>
+        </div>
+      )}
+      {isLoading && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <TailSpin color="#cc0101" height={80} width={80} />{" "}
+        </div>
+      )}
+      {errorValue.length > 0 && (
+        <div
+          style={{
+            marginTop: "1rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <img src={errorImage} alt="" />
+          <Typography
+            variant="p"
+            sx={{
+              display: { xs: "none", md: "flex" },
+              flexGrow: 1,
+              fontFamily: "Poppins",
+              fontWeight: 700,
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            {errorValue}
+          </Typography>
+        </div>
+      )}
     </RecommenderWrapper>
   );
 };

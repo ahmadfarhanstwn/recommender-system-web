@@ -122,7 +122,7 @@ const ResponsiveAppBar = () => {
             sx={{
               flexGrow: 1,
               display: { xs: "none", md: "flex" },
-              marginLeft: "37rem",
+              marginLeft: "45rem",
             }}
           >
             {pages.map((page) => {
